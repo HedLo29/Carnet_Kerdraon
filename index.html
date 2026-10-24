@@ -1,0 +1,558 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<style>body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+</head>
+<body>
+<title>Bureau du Pr Kerdraon</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IM+Fell+French+Canon:ital@0;1&family=IM+Fell+French+Canon+SC&family=EB+Garamond:ital,wght@0,400;0,500;1,400&family=Caveat:wght@500;600&display=swap">
+<style>
+/* Mise en page : un carnet seul, posé sous la lampe du bureau ; la fenêtre ronde de Ker-Ys luit derrière. On tourne les pages une à une. */
+:root{
+  --desk:#15100c; --desk-2:#2a1e15; --lamp:#f3c77a;
+  --paper:#efe5cf; --paper-2:#e0cfac; --ink:#2b2118; --ink-soft:#5f4f3c; --ink-red:#8b3a2a;
+  --gold:#8a7a52; --gold-bright:#cdb070;
+  --leather:#1d3331; --leather-2:#132322; --wax:#7b2d2d;
+  --abyss:#02121a; --abyss-2:#06324a; --neon:#2ff3ff; --neon-deep:#0088ff; --neon-rim:#0a7d98;
+  --f-display:"IM Fell French Canon", "EB Garamond", Georgia, serif;
+  --f-sc:"IM Fell French Canon SC", "IM Fell French Canon", Georgia, serif;
+  --f-body:"EB Garamond", Garamond, Georgia, serif;
+  --f-hand:"Caveat", "Segoe Print", "Bradley Hand", cursive;
+  color-scheme: dark;
+}
+html, body { min-height:100%; }
+body { background: var(--desk); color: var(--paper); font-family: var(--f-body); font-size:17px; line-height:1.55; }
+*,*::before,*::after{ box-sizing:border-box; }
+button{ font:inherit; color:inherit; }
+:focus-visible{ outline:2px solid var(--neon); outline-offset:3px; border-radius:4px; }
+
+/* ---------- Le bureau ---------- */
+.scene{
+  position:relative; min-height:100vh; overflow-x:clip; isolation:isolate;
+  padding-block: 28px 44px;
+  padding-left:max(16px, env(safe-area-inset-left, 0px));
+  padding-right:max(16px, env(safe-area-inset-right, 0px));
+  background:
+    radial-gradient(55% 42% at 50% 34%, rgba(243,199,122,.20), transparent 72%),
+    radial-gradient(90% 60% at 50% 110%, rgba(0,0,0,.6), transparent 70%),
+    repeating-linear-gradient(176deg, rgba(255,220,170,.025) 0 2px, transparent 2px 9px),
+    linear-gradient(180deg, var(--desk-2), var(--desk) 70%);
+}
+.window{
+  position:absolute; z-index:-1; top:clamp(-40px, -3vw, 0px); right:clamp(-90px, -6vw, 4vw);
+  width:clamp(170px, 30vw, 300px); aspect-ratio:1; max-width:100%; border-radius:50%;
+  background:
+    linear-gradient(90deg, transparent calc(50% - 3px), rgba(20,14,10,.9) calc(50% - 3px) calc(50% + 3px), transparent calc(50% + 3px)),
+    linear-gradient(0deg, transparent calc(50% - 3px), rgba(20,14,10,.9) calc(50% - 3px) calc(50% + 3px), transparent calc(50% + 3px)),
+    radial-gradient(circle at 45% 60%, rgba(47,243,255,.38), rgba(0,90,140,.30) 45%, rgba(2,18,26,.95) 75%);
+  box-shadow: 0 0 0 10px #2b1f16, 0 0 0 13px #4a3624, 0 0 80px 10px rgba(0,136,255,.18);
+  opacity:.72;
+}
+.lamp-glow{
+  position:absolute; z-index:-1; left:50%; top:4%; width:min(780px,120%); height:420px; translate:-50% 0;
+  background: radial-gradient(closest-side, rgba(243,199,122,.16), transparent);
+  animation: flicker 7s ease-in-out infinite;
+}
+@keyframes flicker{ 0%,100%{opacity:1} 46%{opacity:.86} 50%{opacity:.95} 54%{opacity:.82} }
+
+.intro{ max-width:620px; margin:0 auto 26px; text-align:center; }
+.eyebrow{ font-family:var(--f-sc); letter-spacing:.14em; font-size:.82rem; color:var(--gold-bright); margin:0 0 6px; }
+.intro h1{ font-family:var(--f-display); font-weight:400; font-size:clamp(2rem, 6vw, 3.1rem); line-height:1.08; margin:0 0 10px; text-wrap:balance; color:#f6ead2; }
+.intro p.lede{ margin:0 auto; max-width:52ch; color:#d8c8a8; font-size:1.02rem; text-wrap:pretty; }
+
+/* ---------- Le carnet ---------- */
+.book-wrap{ display:flex; justify-content:center; }
+.book{
+  position:relative; width:min(540px, 100%); height:clamp(560px, 78vh, 720px);
+  perspective:2400px; isolation:isolate; touch-action:pan-y;
+}
+.book::before{ /* ombre portée sur le bureau */
+  content:""; position:absolute; inset:18px -8px -18px 14px; z-index:-2;
+  background:rgba(0,0,0,.65); filter:blur(20px); border-radius:12px;
+}
+.book::after{ /* tranche des pages */
+  content:""; position:absolute; z-index:-1; top:7px; bottom:7px; right:-7px; width:8px; border-radius:0 4px 4px 0;
+  background: repeating-linear-gradient(180deg, #e8dcc2 0 2px, #bfae8a 2px 3px);
+}
+.leaf{
+  position:absolute; inset:0; transform-origin:left center; transform-style:preserve-3d;
+  transition: transform .95s cubic-bezier(.55,.06,.28,1), visibility 0s linear 0s;
+}
+.leaf.turned{ transform: rotateY(-178deg); visibility:hidden; transition: transform .95s cubic-bezier(.55,.06,.28,1), visibility 0s linear .95s; }
+.face{
+  position:absolute; inset:0; backface-visibility:hidden; -webkit-backface-visibility:hidden;
+  border-radius:3px 10px 10px 3px; overflow:hidden;
+}
+.back{
+  transform: rotateY(180deg); border-radius:10px 3px 3px 10px;
+  background:
+    linear-gradient(270deg, rgba(60,40,20,.30) 0, rgba(60,40,20,.06) 5%, transparent 10%),
+    radial-gradient(80% 60% at 30% 80%, rgba(140,100,55,.18), transparent 70%),
+    var(--paper-2);
+  transition: opacity .25s;
+}
+.leaf.turned .back{ opacity:0; transition: opacity .35s .55s; }
+
+/* papier */
+.page{
+  color:var(--ink); display:flex; flex-direction:column;
+  padding: clamp(18px,4.5vw,34px) clamp(20px,5vw,44px) 16px clamp(30px,6.5vw,56px);
+  background:
+    linear-gradient(90deg, rgba(60,40,20,.30) 0, rgba(60,40,20,.08) 4%, transparent 9%),
+    radial-gradient(120% 80% at 88% 8%, rgba(255,252,240,.55), transparent 60%),
+    radial-gradient(70% 40% at 15% 100%, rgba(120,85,45,.20), transparent 70%),
+    radial-gradient(40% 18% at 100% 100%, rgba(70,120,140,.12), transparent 80%),
+    var(--paper);
+  box-shadow: inset -1px 0 0 rgba(0,0,0,.12);
+}
+.page.stain::after{ /* cerne d'eau */
+  content:""; position:absolute; width:150px; aspect-ratio:1; right:-38px; bottom:46px; border-radius:50%; pointer-events:none;
+  background: radial-gradient(circle, transparent 58%, rgba(110,80,40,.16) 62%, transparent 68%);
+}
+.runhead{
+  display:flex; justify-content:space-between; gap:12px;
+  font-family:var(--f-sc); font-size:.78rem; letter-spacing:.12em; color:var(--ink-soft);
+  border-bottom:1px solid rgba(138,122,82,.45); padding-bottom:6px; margin-bottom:14px;
+}
+.page-body{ flex:1; min-height:0; overflow-y:auto; overscroll-behavior:contain; padding-right:4px; scrollbar-width:thin; scrollbar-color: var(--gold) transparent; }
+.page-body.center{ display:flex; flex-direction:column; justify-content:center; }
+.found{ font-family:var(--f-sc); letter-spacing:.1em; font-size:.8rem; color:var(--gold); margin:0; }
+.found b{ font-weight:400; color:var(--ink-soft); }
+.folio-num{
+  font-family:var(--f-display); font-style:italic; color:var(--gold); opacity:.85;
+  font-size:clamp(3.2rem, 12vw, 4.6rem); line-height:1; margin:6px 0 14px;
+}
+.quote{ margin:0; font-family:var(--f-display); font-style:italic; font-size:clamp(1.22rem, 3.6vw, 1.5rem); line-height:1.45; text-wrap:pretty; }
+.quote.notes{ font-family:var(--f-body); font-style:normal; font-size:clamp(1.08rem,3.1vw,1.2rem); line-height:1.6; }
+.notes-label{ font-family:var(--f-sc); letter-spacing:.1em; font-size:.76rem; color:var(--ink-soft); margin:0 0 6px; }
+.note{
+  font-family:var(--f-hand); font-size:clamp(1.25rem, 3.6vw, 1.45rem); line-height:1.25; color:var(--ink-red);
+  margin:18px 0 4px auto; max-width:30ch; rotate:-2deg; padding-left:14px; border-left:2px solid rgba(139,58,42,.4);
+}
+.cite{ font-size:.86rem; color:var(--ink-soft); padding-top:10px; text-align:right; }
+
+/* dog-ear pour tourner */
+.dogear{
+  position:absolute; right:0; bottom:0; width:58px; height:58px; border:0; padding:0; cursor:pointer; background:transparent;
+}
+.dogear::before{
+  content:""; position:absolute; right:0; bottom:0; width:30px; height:30px;
+  background: linear-gradient(135deg, rgba(0,0,0,0) 50%, #d6c59f 50%, #c4b089);
+  box-shadow:-2px -2px 5px rgba(60,40,20,.25); border-top-left-radius:4px;
+  transition: width .2s, height .2s;
+}
+.dogear:hover::before, .dogear:focus-visible::before{ width:40px; height:40px; }
+
+/* couverture */
+.cover{
+  border-radius:4px 12px 12px 4px; color:var(--gold-bright);
+  background:
+    linear-gradient(90deg, rgba(0,0,0,.45) 0, rgba(0,0,0,.1) 5%, transparent 10%),
+    radial-gradient(90% 70% at 70% 25%, rgba(255,255,255,.06), transparent 60%),
+    repeating-radial-gradient(circle at 30% 70%, rgba(255,255,255,.012) 0 2px, transparent 2px 5px),
+    linear-gradient(160deg, var(--leather), var(--leather-2));
+  display:grid; place-items:center; text-align:center; padding:28px;
+}
+.cover-frame{
+  position:absolute; inset:22px 22px 22px 34px; border:1px solid rgba(205,176,112,.55); border-radius:6px;
+  box-shadow: inset 0 0 0 5px transparent, inset 0 0 0 6px rgba(205,176,112,.3);
+}
+.cover-inner{ position:relative; display:grid; gap:14px; justify-items:center; }
+.cover small{ font-family:var(--f-sc); letter-spacing:.18em; font-size:.78rem; color:#b8a06a; }
+.cover h2{ font-family:var(--f-display); font-style:italic; font-weight:400; font-size:clamp(2.4rem, 9vw, 3.4rem); line-height:1; margin:0; color:#e1c788; text-shadow:0 1px 0 rgba(0,0,0,.6); }
+.cover .author{ font-family:var(--f-sc); letter-spacing:.16em; font-size:1rem; color:#d2b97d; margin:0; }
+.seal{
+  width:76px; aspect-ratio:1; border-radius:50%; display:grid; place-items:center; margin-top:10px;
+  background: radial-gradient(circle at 35% 30%, #a54848, var(--wax) 55%, #4d1a1a);
+  box-shadow: 0 3px 8px rgba(0,0,0,.5), inset 0 0 0 6px rgba(0,0,0,.12);
+  font-family:var(--f-display); font-style:italic; font-size:2.2rem; color:rgba(255,215,200,.55);
+}
+.open-btn{
+  margin-top:14px; background:transparent; border:1px solid rgba(205,176,112,.6); color:#e1c788; padding:9px 20px; border-radius:999px;
+  font-family:var(--f-sc); letter-spacing:.12em; font-size:.85rem; cursor:pointer; transition: background .2s;
+}
+.open-btn:hover{ background:rgba(205,176,112,.12); }
+
+/* sommaire */
+.toc h2{ font-family:var(--f-display); font-weight:400; font-size:clamp(1.6rem,5vw,2rem); margin:0 0 8px; line-height:1.15; }
+.toc p{ margin:0 0 12px; font-size:1rem; color:var(--ink); text-wrap:pretty; }
+.toc ol{ list-style:none; margin:0 0 16px; padding:0; display:grid; gap:1px; }
+.toc li button{
+  width:100%; display:flex; align-items:baseline; gap:8px; background:none; border:0; padding:5px 2px; cursor:pointer; text-align:left; color:var(--ink);
+  border-radius:4px;
+}
+.toc li button:hover{ background:rgba(138,122,82,.14); }
+.toc .tn{ font-family:var(--f-display); font-style:italic; color:var(--gold); min-width:3.2ch; font-variant-numeric:tabular-nums; }
+.toc .ts{ flex:1; min-width:0; display:flex; gap:6px; align-items:baseline; }
+.toc .ts::after{ content:""; flex:1; border-bottom:1px dotted rgba(95,79,60,.45); translate:0 -4px; }
+.toc .tp{ font-size:.85rem; color:var(--ink-soft); font-variant-numeric:tabular-nums; }
+.ref-label{ font-family:var(--f-sc); letter-spacing:.1em; font-size:.78rem; color:var(--ink-soft); margin:0 0 4px !important; }
+.ref{ padding-left:2em; text-indent:-2em; font-size:.98rem !important; }
+.ref-note{ font-family:var(--f-hand); font-size:1.25rem !important; color:var(--ink-red) !important; line-height:1.2; rotate:-1deg; }
+
+/* dernière page */
+.last .quote{ font-size:clamp(1.12rem,3.3vw,1.32rem); }
+.cite-inline{ margin:8px 0 0; text-align:right; font-size:.86rem; color:var(--ink-soft); }
+.ecrin{
+  --coin: clamp(132px, 34vw, 172px);
+  position:relative; margin:16px auto 10px; width:100%; max-width:340px; height:calc(var(--coin) + 58px);
+  border-radius:16px; perspective:900px; cursor:grab; touch-action:none; user-select:none;
+  background: radial-gradient(70% 70% at 50% 42%, var(--abyss-2), var(--abyss) 75%);
+  box-shadow: inset 0 2px 14px rgba(0,0,0,.8), 0 1px 0 rgba(255,255,255,.4);
+  display:grid; place-items:center;
+}
+.ecrin:active{ cursor:grabbing; }
+.coin{ position:relative; width:var(--coin); height:var(--coin); transform-style:preserve-3d; translate:0 -10px; will-change:transform; }
+.rim, .coin-face{ position:absolute; inset:0; border-radius:50%; }
+.rim{ background: radial-gradient(circle, #0fb8d8 0, var(--neon-rim) 70%, #064a5c 100%); }
+.coin-face{
+  backface-visibility:hidden; -webkit-backface-visibility:hidden; overflow:hidden;
+  box-shadow: 0 0 16px rgba(47,243,255,.6), 0 0 44px rgba(0,136,255,.35), inset 0 0 22px rgba(47,243,255,.32);
+}
+.coin-face svg{ display:block; width:100%; height:100%; }
+.coin-face::after{
+  content:""; position:absolute; inset:0; border-radius:50%; pointer-events:none; mix-blend-mode:screen;
+  background: linear-gradient(105deg, transparent 38%, rgba(210,255,255,.38) 50%, transparent 62%);
+  background-size:300% 100%; background-position: calc(var(--sheen, .5) * 100%) 0;
+}
+.coin-face.front{ transform: translateZ(6px); }
+.coin-face.reverse{ transform: rotateY(180deg) translateZ(6px); }
+.coin-floor{
+  position:absolute; left:50%; bottom:14px; height:14px; width:calc(var(--coin) * var(--w, 1)); translate:-50% 0;
+  border-radius:50%; background: radial-gradient(closest-side, rgba(47,243,255,.55), rgba(0,136,255,.15) 60%, transparent);
+  filter:blur(3px);
+}
+.badge-title{ margin:4px 0 0; text-align:center; font-family:var(--f-display); font-size:clamp(1.4rem,4.6vw,1.75rem); line-height:1.1; }
+.badge-sub{ margin:2px 0 0; text-align:center; font-family:var(--f-sc); letter-spacing:.16em; font-size:.82rem; color:var(--neon-rim); }
+.badge-hint{ margin:8px 0 0; text-align:center; font-size:.82rem; color:var(--ink-soft); font-style:italic; }
+
+/* ---------- commandes ---------- */
+.controls{
+  display:flex; align-items:center; justify-content:center; gap:14px; margin:22px auto 0; max-width:540px;
+}
+.ctl{
+  display:inline-flex; align-items:center; gap:8px; border:1px solid rgba(205,176,112,.5); background:rgba(42,30,21,.75);
+  color:#ead7aa; padding:9px 16px; border-radius:999px; cursor:pointer; font-size:.95rem; transition: background .2s, opacity .2s;
+}
+.ctl:hover:not(:disabled){ background:rgba(205,176,112,.16); }
+.ctl:disabled{ opacity:.35; cursor:default; }
+.ctl .arrow{ font-family:var(--f-display); font-size:1.25rem; line-height:1; }
+.where{ flex:1; min-width:0; text-align:center; margin:0; color:#d8c8a8; font-size:.92rem; }
+.where b{ display:block; font-family:var(--f-sc); font-weight:400; letter-spacing:.1em; color:var(--gold-bright); font-size:.84rem; }
+.progress{ display:flex; justify-content:center; gap:5px; margin:14px auto 0; flex-wrap:wrap; max-width:540px; }
+.progress i{ width:7px; height:7px; border-radius:50%; background:rgba(205,176,112,.25); transition: background .3s, box-shadow .3s; }
+.progress i.on{ background:var(--gold-bright); }
+.progress i.last.on{ background:var(--neon); box-shadow:0 0 8px var(--neon); }
+.sr{ position:absolute; width:1px; height:1px; overflow:hidden; clip-path:inset(50%); white-space:nowrap; }
+
+@media (max-width:480px){
+  .ctl .lbl{ display:none; }
+  .ctl{ padding:9px 14px; }
+}
+@media (prefers-reduced-motion: reduce){
+  .leaf, .leaf.turned, .back, .leaf.turned .back{ transition-duration:.01s !important; transition-delay:0s !important; }
+  .lamp-glow{ animation:none; }
+}
+</style>
+
+<main class="scene">
+  <div class="window" aria-hidden="true"></div>
+  <div class="lamp-glow" aria-hidden="true"></div>
+
+  <header class="intro">
+    <p class="eyebrow">Les Archives Englouties de l'Île d'Ys</p>
+    <h1>Le bureau du Professeur</h1>
+    <p class="lede">La lampe brûle encore. Sur le bureau, le carnet de Kerdraon attend, enfin complet : tournez ses pages pour relire les fragments que vous avez rassemblés de salle en salle.</p>
+  </header>
+
+  <div class="book-wrap">
+    <div class="book" id="book" aria-roledescription="carnet" aria-label="Carnet des marées du Professeur Kerdraon"></div>
+  </div>
+
+  <nav class="controls" aria-label="Feuilleter le carnet">
+    <button class="ctl" id="prev" type="button" aria-label="Page précédente"><span class="arrow" aria-hidden="true">‹</span><span class="lbl">Page précédente</span></button>
+    <p class="where" id="where" aria-live="polite"></p>
+    <button class="ctl" id="next" type="button" aria-label="Page suivante"><span class="lbl">Page suivante</span><span class="arrow" aria-hidden="true">›</span></button>
+  </nav>
+  <div class="progress" id="progress" aria-hidden="true"></div>
+</main>
+
+<script>
+/* ===== Les fragments du carnet : modifiez ici les textes ou les salles ===== */
+const FOLIOS = [
+  { n:"III",  salle:"Bibliothèque de Ker-Ys", text:"« Ceux qui entrent ici cherchent rarement un livre. Ils cherchent une réponse. »" },
+  { n:"IV",   salle:"Accueil", text:"« Ce qui n'est pas enregistré n'existe pas. Ce qui est enregistré peut toujours être retrouvé. »" },
+  { n:"V",    salle:"Rotonde des Échanges", text:"« Ce lieu se transforme selon les besoins : salle d'exposition, salle de conférence, ou simple refuge pour travailler, seul ou à plusieurs. »" },
+  { n:"VI",   salle:"Archives de Ker-Ys", text:"« Tout ce qui a été écrit depuis un siècle se trouve ici. Encore faut-il savoir poser la bonne question, et apprendre où se trouve la bonne réponse. »" },
+  { n:"VII",  salle:"Chambre des Copies Interdites", kind:"notes",
+    text:"Selon les récits bretons recueillis au XIX<sup>e</sup> siècle, la ville de Ker-Ys aurait été engloutie sous les flots à la suite d'une trahison, la princesse Dahut ayant ouvert les portes de la digue sous l'influence d'un mystérieux cavalier.",
+    note:"Recopié tel quel chez Le Goff. Ni guillemets, ni source : premier piège." },
+  { n:"VIII", salle:"Grande Nef des Codex", text:"« Un livre, un article de presse, un article de revue scientifique n'ont pas la même portée informationnelle, mais ils sont complémentaires. Confondre les trois, c'est perdre le fil de la vérité. »" },
+  { n:"IX",   salle:"Scriptorium Nocturne", text:"« Le numérique n'a pas de couverture, pas de reliure, pas de cachet de cire. Il faut apprendre à juger une source sans pouvoir la tenir. »" },
+  { n:"X",    salle:"Galerie des légendes", text:"« Une ressource qui ne répond pas n'est pas muette. C'est la question qui est mal posée. »" },
+  { n:"XI",   salle:"Salon de lecture", text:"« Une source ne prouve rien par elle-même. C'est vous qui devez la mettre à l'épreuve. »" },
+  { n:"XII",  salle:"Chambre des Copies Interdites", kind:"notes",
+    text:"D'après les légendes armoricaines du XIX<sup>e</sup> siècle, Ker-Ys aurait sombré dans les eaux à cause d'une trahison : Dahut, la princesse, aurait ouvert les vannes de la digue, envoûtée par un cavalier mystérieux.",
+    note:"D'autres mots, la même idée, et toujours pas de Le Goff : deuxième piège." },
+  { n:"XIX",  salle:"Chambre des Copies Interdites", kind:"notes",
+    text:"Comme le rappelle Le Goff (1998, p. 47), « la ville de Ker-Ys aurait été engloutie sous les flots à la suite d'une trahison ». Cette version, popularisée par les récits bretons du XIX<sup>e</sup> siècle, reste la plus répandue aujourd'hui.",
+    note:"Guillemets, auteur, année, page. Voilà comment on rend à chacun ce qui lui revient." },
+  { n:"XX",   salle:"Chambre des Copies Interdites", text:"« On peut rendre un objet volé. Une idée qu'on a faite sienne sans en citer l'auteur, jamais. »" }
+];
+const LAST_WORDS = "« Si vous lisez ces mots, c'est que vous avez tenu jusqu'au bout. Peu y parviennent. Les Archives n'ouvrent leurs secrets qu'à ceux qui savent les mériter. Vous êtes désormais des leurs. »";
+
+/* ===== Construction des pages ===== */
+const pages = [{type:"cover"}, {type:"toc"}, ...FOLIOS.map(f => ({type:"folio", f})), {type:"last"}];
+const N = pages.length;
+const book = document.getElementById("book");
+const RH = (right) => `<header class="runhead"><span>Carnet des marées</span><span>${right}</span></header>`;
+const dogear = (i) => i < N-1 ? `<button class="dogear" type="button" data-turn aria-label="Tourner la page"></button>` : "";
+
+function front(p, i){
+  if(p.type === "cover") return `
+    <div class="face cover">
+      <div class="cover-frame" aria-hidden="true"></div>
+      <div class="cover-inner">
+        <small>Archives englouties · Bibliothèque de Ker-Ys</small>
+        <h2>Carnet<br>des marées</h2>
+        <p class="author">Pr M. Kerdraon</p>
+        <div class="seal" aria-hidden="true">K</div>
+        <button class="open-btn" type="button" data-turn>Ouvrir le carnet</button>
+      </div>
+    </div>`;
+  if(p.type === "toc") return `
+    <div class="face page stain toc">
+      ${RH("Garde")}
+      <div class="page-body">
+        <h2>Le carnet reconstitué</h2>
+        <p>Vous avez rassemblé douze pages, dispersées dans les salles des Archives. Réunies, elles ne forment qu'un seul document : une seule référence, et un numéro de folio pour retrouver chaque citation.</p>
+        <ol>
+          ${FOLIOS.map((f, k) => `<li><button type="button" data-goto="${k+2}"><span class="tn">${f.n}</span><span class="ts">${f.salle}</span><span class="tp">p. ${k+3}</span></button></li>`).join("")}
+        </ol>
+        <p class="ref-label">Référence</p>
+        <p class="ref">Kerdraon, M. (s.d.). <em>Carnet des marées</em> [Manuscrit non publié]. Archives englouties, Bibliothèque de Ker-Ys.</p>
+        <p class="ref-note">Le folio se met dans la citation, pas dans la référence.</p>
+      </div>
+      ${dogear(i)}
+    </div>`;
+  if(p.type === "folio"){
+    const f = p.f;
+    return `
+    <div class="face page${i % 3 === 1 ? " stain" : ""}">
+      ${RH("f° " + f.n)}
+      <div class="page-body">
+        <p class="found">Fragment trouvé · <b>${f.salle}</b></p>
+        <p class="folio-num" aria-hidden="true">${f.n}</p>
+        ${f.kind === "notes" ? `<p class="notes-label">Notes de lecture</p>` : ""}
+        <blockquote class="quote ${f.kind || ""}">${f.text}</blockquote>
+        ${f.note ? `<p class="note">${f.note}</p>` : ""}
+      </div>
+      <footer class="cite">(Kerdraon, s.d., folio ${f.n})</footer>
+      ${dogear(i)}
+    </div>`;
+  }
+  return `
+    <div class="face page last">
+      ${RH("Dernière page")}
+      <div class="page-body center">
+        <blockquote class="quote">${LAST_WORDS}</blockquote>
+        <p class="cite-inline">(Kerdraon, s.d., dernière page)</p>
+        <div class="ecrin" id="stage" role="img" aria-label="Insigne bleu néon « Gardien·ne du Flot », Le jeu des Ker-Ys, qui tourne sur lui-même">
+          <div class="coin" id="coin">${rimLayers()}
+            <div class="coin-face front">${coinFront()}</div>
+            <div class="coin-face reverse">${coinBack()}</div>
+          </div>
+          <div class="coin-floor" id="floor"></div>
+        </div>
+        <p class="badge-title">Gardien·ne du Flot</p>
+        <p class="badge-sub">Le jeu des Ker-Ys</p>
+        <p class="badge-hint">Faites tourner l'insigne du doigt ou à la souris.</p>
+      </div>
+    </div>`;
+}
+
+function rimLayers(){
+  let s = "";
+  for(let z = -5; z <= 5; z += 1) s += `<div class="rim" style="transform:translateZ(${z}px)"></div>`;
+  return s;
+}
+const NEON = "#2ff3ff";
+function coinFront(){
+  return `<svg viewBox="0 0 200 200" aria-hidden="true">
+    <defs>
+      <radialGradient id="cfG" cx="50%" cy="42%" r="60%"><stop offset="0" stop-color="#0c4c6e"/><stop offset=".7" stop-color="#03202e"/><stop offset="1" stop-color="#010d14"/></radialGradient>
+      <filter id="cfGlow" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="2.2" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+      <path id="cfRing" d="M100,100 m-79,0 a79,79 0 1,1 158,0 a79,79 0 1,1 -158,0"/>
+    </defs>
+    <circle cx="100" cy="100" r="100" fill="url(#cfG)"/>
+    <g fill="none" stroke="${NEON}" filter="url(#cfGlow)">
+      <circle cx="100" cy="100" r="95" stroke-width="2.6"/>
+      <circle cx="100" cy="100" r="90" stroke-width=".8" opacity=".7"/>
+      <circle cx="100" cy="100" r="68" stroke-width="1.3"/>
+      <!-- flèches de la cité engloutie -->
+      <path stroke-width="1.8" stroke-linejoin="round" d="M66,118 V92 L72,82 L78,92 V118 M78,104 H88 V80 L100,52 L112,80 V104 H122 M122,118 V92 L128,82 L134,92 V118 M88,104 V118 M112,104 V118"/>
+      <path stroke-width="1.2" d="M96,118 V104 A4,4 0 0 1 104,104 V118"/>
+      <circle cx="100" cy="86" r="4" stroke-width="1.2"/>
+      <!-- flots -->
+      <path stroke-width="1.8" stroke-linecap="round" d="M52,122 q8,-6 16,0 t16,0 t16,0 t16,0 t16,0 t16,0"/>
+      <path stroke-width="1.4" stroke-linecap="round" opacity=".8" d="M58,132 q7,-5 14,0 t14,0 t14,0 t14,0 t14,0 t14,0"/>
+    </g>
+    <text font-family="IM Fell French Canon SC, Georgia, serif" font-size="11.5" letter-spacing="2.2" fill="${NEON}" filter="url(#cfGlow)">
+      <textPath href="#cfRing" startOffset="0">LE JEU DES KER-YS ✦ LES ARCHIVES ENGLOUTIES ✦</textPath>
+    </text>
+    <text x="100" y="152" text-anchor="middle" font-family="IM Fell French Canon, Georgia, serif" font-style="italic" font-size="17" fill="${NEON}" filter="url(#cfGlow)">Ker-Ys</text>
+  </svg>`;
+}
+function coinBack(){
+  return `<svg viewBox="0 0 200 200" aria-hidden="true">
+    <defs>
+      <radialGradient id="cbG" cx="50%" cy="50%" r="60%"><stop offset="0" stop-color="#0a4464"/><stop offset=".7" stop-color="#031d2a"/><stop offset="1" stop-color="#010d14"/></radialGradient>
+      <filter id="cbGlow" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="2.2" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+      <path id="cbRing" d="M100,100 m-79,0 a79,79 0 1,1 158,0 a79,79 0 1,1 -158,0"/>
+    </defs>
+    <circle cx="100" cy="100" r="100" fill="url(#cbG)"/>
+    <g fill="none" stroke="${NEON}" filter="url(#cbGlow)">
+      <circle cx="100" cy="100" r="95" stroke-width="2.6"/>
+      <circle cx="100" cy="100" r="90" stroke-width=".8" opacity=".7"/>
+      <circle cx="100" cy="100" r="68" stroke-width="1.3"/>
+      <path stroke-width="1.4" stroke-linecap="round" d="M74,126 q6.5,-5 13,0 t13,0 t13,0 t13,0"/>
+      <path stroke-width="1.2" d="M100,58 l3,7 l7,3 l-7,3 l-3,7 l-3,-7 l-7,-3 l7,-3 z"/>
+    </g>
+    <text font-family="IM Fell French Canon SC, Georgia, serif" font-size="11.5" letter-spacing="2.2" fill="${NEON}" filter="url(#cbGlow)">
+      <textPath href="#cbRing" startOffset="0">ÎLE D'YS ✦ BIBLIOTHÈQUE DE KER-YS ✦ CARNET DES MARÉES ✦</textPath>
+    </text>
+    <g font-family="IM Fell French Canon SC, Georgia, serif" fill="${NEON}" text-anchor="middle" filter="url(#cbGlow)">
+      <text x="100" y="100" font-size="17" letter-spacing="1.5">GARDIEN·NE</text>
+      <text x="100" y="118" font-size="14" letter-spacing="3">DU FLOT</text>
+    </g>
+  </svg>`;
+}
+
+book.innerHTML = pages.map((p, i) => `
+  <section class="leaf" data-i="${i}" aria-label="${label(i)}">
+    ${front(p, i)}
+    <div class="face back" aria-hidden="true"></div>
+  </section>`).join("");
+const leaves = [...book.querySelectorAll(".leaf")];
+
+function label(i){
+  const p = pages[i];
+  if(p.type === "cover") return "Couverture";
+  if(p.type === "toc") return "Page de garde : le carnet reconstitué";
+  if(p.type === "folio") return "Folio " + p.f.n;
+  return "Dernière page";
+}
+
+/* ===== Feuilletage ===== */
+let current = 0;
+const where = document.getElementById("where");
+const prevBtn = document.getElementById("prev");
+const nextBtn = document.getElementById("next");
+const progress = document.getElementById("progress");
+progress.innerHTML = pages.map((p, i) => `<i class="${i === N-1 ? "last" : ""}"></i>`).join("");
+const dots = [...progress.children];
+
+function layout(){
+  leaves.forEach((l, i) => {
+    const turned = i < current;
+    l.classList.toggle("turned", turned);
+    if(!l.dataset.moving) l.style.zIndex = turned ? i + 1 : (N * 2 - i);
+    const isCur = i === current;
+    l.inert = !isCur;
+    l.setAttribute("aria-hidden", isCur ? "false" : "true");
+  });
+  prevBtn.disabled = current === 0;
+  nextBtn.disabled = current === N - 1;
+  const p = pages[current];
+  const sub = p.type === "folio" ? p.f.salle : p.type === "toc" ? "Douze fragments rassemblés" : p.type === "last" ? "Gardien·ne du Flot" : "Le carnet est fermé";
+  where.innerHTML = `<b>${label(current)}</b>${sub} · ${current + 1}/${N}`;
+  dots.forEach((d, i) => d.classList.toggle("on", i <= current));
+  coinActive = pages[current].type === "last";
+}
+
+function bump(i){ // la page en mouvement passe au-dessus des autres
+  const l = leaves[i]; if(!l) return;
+  l.dataset.moving = "1"; l.style.zIndex = N * 3;
+  clearTimeout(l._t); l._t = setTimeout(() => { delete l.dataset.moving; layout(); }, 1000);
+}
+function next(){ if(current < N - 1){ bump(current); current++; layout(); } }
+function prev(){ if(current > 0){ current--; bump(current); layout(); } }
+let jumpTimer;
+function goTo(target){
+  clearInterval(jumpTimer);
+  jumpTimer = setInterval(() => {
+    if(current < target) next(); else if(current > target) prev(); else clearInterval(jumpTimer);
+  }, 130);
+}
+
+prevBtn.addEventListener("click", prev);
+nextBtn.addEventListener("click", next);
+book.addEventListener("click", e => {
+  const t = e.target.closest("[data-turn]"); if(t){ next(); return; }
+  const g = e.target.closest("[data-goto]"); if(g) goTo(+g.dataset.goto);
+});
+document.addEventListener("keydown", e => {
+  if(e.target.closest && e.target.closest("input, textarea")) return;
+  if(e.key === "ArrowRight") next();
+  if(e.key === "ArrowLeft") prev();
+});
+/* balayage au doigt */
+let sx = null, sy = 0;
+book.addEventListener("pointerdown", e => { if(e.target.closest("#stage")) return; sx = e.clientX; sy = e.clientY; });
+book.addEventListener("pointerup", e => {
+  if(sx === null) return;
+  const dx = e.clientX - sx, dy = e.clientY - sy; sx = null;
+  if(Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy) * 1.3){ dx < 0 ? next() : prev(); }
+});
+book.addEventListener("pointercancel", () => sx = null);
+
+/* ===== L'insigne en 3D ===== */
+const coin = document.getElementById("coin");
+const floor = document.getElementById("floor");
+const stage = document.getElementById("stage");
+const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+const BASE = reduce ? 0 : 42;           // degrés par seconde
+let angle = reduce ? 18 : -20, vel = BASE, dragging = false, lastX = 0, lastT = 0, prevT = performance.now();
+let coinActive = false;
+
+function draw(){
+  coin.style.transform = `rotateX(9deg) rotateY(${angle}deg)`;
+  const a = ((angle % 360) + 360) % 360;
+  coin.style.setProperty("--sheen", (a / 360).toFixed(3));
+  floor.style.setProperty("--w", (0.35 + 0.65 * Math.abs(Math.cos(angle * Math.PI / 180))).toFixed(3));
+}
+function frame(t){
+  const dt = Math.min(0.05, (t - prevT) / 1000); prevT = t;
+  if(coinActive && !dragging){
+    vel += (BASE - vel) * Math.min(1, dt * 1.4);
+    angle += vel * dt;
+    draw();
+  }
+  requestAnimationFrame(frame);
+}
+stage.addEventListener("pointerdown", e => {
+  dragging = true; lastX = e.clientX; lastT = performance.now(); vel = 0;
+  stage.setPointerCapture(e.pointerId); e.stopPropagation();
+});
+stage.addEventListener("pointermove", e => {
+  if(!dragging) return;
+  const now = performance.now(), dx = e.clientX - lastX, dt = Math.max(0.008, (now - lastT) / 1000);
+  angle += dx * 0.7; vel = (dx * 0.7) / dt; vel = Math.max(-900, Math.min(900, vel));
+  lastX = e.clientX; lastT = now; draw();
+});
+const endDrag = () => { dragging = false; };
+stage.addEventListener("pointerup", e => { endDrag(); e.stopPropagation(); });
+stage.addEventListener("pointercancel", endDrag);
+
+draw();
+layout();
+requestAnimationFrame(frame);
+</script>
+
+</body>
+</html>
