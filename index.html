@@ -79,6 +79,13 @@ button{ font:inherit; color:inherit; }
 /* fragments */
 .frags{ display:grid; grid-template-columns:1fr 1fr; gap:16px 28px; align-content:start; }
 .frags.one{ grid-template-columns:1fr; gap:18px; }
+/* un fragment seul sur sa page : plus grand, centré dans la hauteur */
+.frags.solo{ height:100%; align-content:center; max-width:34em; margin:0 auto; }
+.frags.solo .frag{ grid-template-columns:4.4rem minmax(0,1fr); column-gap:14px; }
+.frags.solo .num{ font-size:2.8rem; }
+.frags.solo .salle{ font-size:.8rem; margin-bottom:6px; }
+.frags.solo blockquote{ font-size:clamp(1.25rem, 3.2vw, 1.5rem); line-height:1.42; }
+.frags.solo .c{ display:block; margin-top:8px; text-align:right; font-size:.85rem; }
 .frag{ display:grid; grid-template-columns:3.1rem minmax(0,1fr); column-gap:10px; min-width:0; }
 .frag .txt{ min-width:0; }
 .frag .num{ font-family:var(--f-display); font-style:italic; color:var(--gold); font-size:1.75rem; line-height:1; min-width:2.2ch; text-align:right; padding-top:2px; }
@@ -156,6 +163,7 @@ button{ font:inherit; color:inherit; }
   .seal{ right:22px; width:50px; }
   .strap{ width:60px; }
   .ctl .lbl{ display:none; }
+  .where{ font-size:.8rem; line-height:1.3; }
 }
 @media (prefers-reduced-motion: reduce){
   .leaf, .leaf.turned, .leaf.turned .back{ transition-duration:.01s !important; transition-delay:0s !important; }
@@ -190,15 +198,6 @@ const GROUPS = [
     { n:"XI",   salle:"Salon de lecture", text:"« Une source ne prouve rien par elle-même. C'est vous qui devez la mettre à l'épreuve. »" }
   ]},
   { titre:"Citer ses sources", folios:[
-    { n:"VII", salle:"Chambre des Copies Interdites", kind:"notes",
-      text:"Selon les récits bretons recueillis au XIX<sup>e</sup> siècle, la ville de Ker-Ys aurait été engloutie sous les flots à la suite d'une trahison […]",
-      note:"Recopié mot pour mot, sans guillemets ni source." },
-    { n:"XII", salle:"Chambre des Copies Interdites", kind:"notes",
-      text:"D'après les légendes armoricaines du XIX<sup>e</sup> siècle, Ker-Ys aurait sombré dans les eaux à cause d'une trahison […]",
-      note:"D'autres mots, mais toujours pas de Le Goff." },
-    { n:"XIX", salle:"Chambre des Copies Interdites", kind:"notes",
-      text:"Comme le rappelle Le Goff (1998, p. 47), « la ville de Ker-Ys aurait été engloutie sous les flots à la suite d'une trahison ».",
-      note:"Guillemets, auteur, année, page." },
     { n:"XX", salle:"Chambre des Copies Interdites", text:"« On peut rendre un objet volé. Une idée qu'on a faite sienne sans en citer l'auteur, jamais. »" }
   ]}
 ];
@@ -214,11 +213,11 @@ let pages = [], leaves = [], current = 0;
 function buildPages(narrow){
   const list = [{ type:"cover", label:"Couverture", sub:"Le carnet est fermé", key:"cover" }];
   GROUPS.forEach((g, gi) => {
-    const chunks = narrow ? [g.folios.slice(0,2), g.folios.slice(2)] : [g.folios];
+    const chunks = (narrow ? [g.folios.slice(0,2), g.folios.slice(2)] : [g.folios]).filter(ch => ch.length);
     chunks.forEach((ch, ci) => list.push({
       type:"frags", titre:g.titre, folios:ch, key:"g"+gi,
-      label: g.titre + (narrow ? ` (${ci+1}/2)` : ""),
-      sub:`f° ${ch[0].n} à ${ch[ch.length-1].n}`
+      label: g.titre + (chunks.length > 1 ? ` (${ci+1}/${chunks.length})` : ""),
+      sub: ch.length > 1 ? `f° ${ch[0].n} à ${ch[ch.length-1].n}` : `f° ${ch[0].n}`
     }));
   });
   if(narrow){
@@ -247,7 +246,7 @@ const wordsHTML = () => `
     <div class="ref-box">
       <p class="ref-label">Référence du carnet</p>
       <p class="ref">Kerdraon, M. (s.d.). <em>Carnet des marées</em> [Manuscrit non publié]. Archives englouties, Bibliothèque de Ker-Ys.</p>
-      <p class="ref-note">Douze folios, un seul document : une seule référence.</p>
+      <p class="ref-note">Neuf folios, un seul document : une seule référence.</p>
     </div>
   </div>`;
 const badgeHTML = () => `
@@ -279,7 +278,7 @@ function faceHTML(p, i, n){
   if(p.type === "frags") return `
     <div class="face page">
       ${RH(p.label, p.sub)}
-      <div class="page-body"><div class="frags${p.folios.length < 3 ? " one" : ""}">${p.folios.map(fragHTML).join("")}</div></div>
+      <div class="page-body"><div class="frags${p.folios.length < 3 ? " one" : ""}${p.folios.length === 1 ? " solo" : ""}">${p.folios.map(fragHTML).join("")}</div></div>
       ${ear}
     </div>`;
   if(p.type === "words") return `

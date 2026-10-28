@@ -1,6 +1,6 @@
 # Le bureau du Professeur
 
-Scène finale du jeu **Les Archives Englouties de l'Île d'Ys** : le *Carnet des marées* du Pr Kerdraon, à feuilleter (douze folios rassemblés dans les salles, regroupés par étape : quatre par page sur ordinateur, deux sur téléphone), et l'insigne néon « Gardien·ne du Flot » en 3D sur la dernière page.
+Scène finale du jeu **Les Archives Englouties de l'Île d'Ys** : le *Carnet des marées* du Pr Kerdraon, à feuilleter (neuf folios rassemblés dans les salles, regroupés par étape : jusqu'à quatre par page sur ordinateur, deux sur téléphone), et l'insigne néon « Gardien·ne du Flot » en 3D sur la dernière page.
 
 Page autonome (`index.html`) publiée avec GitHub Pages, à intégrer dans Moodle par une iframe dans une « Zone texte et média » :
 
